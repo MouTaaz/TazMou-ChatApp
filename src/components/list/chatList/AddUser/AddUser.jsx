@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"; // Added useMemo
 import { toast } from "react-toastify";
 import supabase from "../../../../lib/Supabase.js";
-import "./AddUser.css";
+import "./addUser.css";
 import useSessionStore from "../../../../lib/useStore.js";
 
 const AddUser = ({ onClose }) => {
