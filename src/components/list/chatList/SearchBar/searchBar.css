@@ -1,0 +1,42 @@
+/* SearchBar Component Styles */
+.searchBar {
+  flex: 1;
+  background-color: rgba(17, 25, 40, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.searchBar:focus-within {
+  background-color: rgba(17, 25, 40, 0.8);
+}
+
+.searchBar input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  flex: 1;
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.searchBar input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.searchBar img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0.8);
+  rotate: 80deg;
+}
+.searchBar img:hover {
+  filter: brightness(10);
+  cursor: pointer;
+  transform: scale(1.1) rotate(-80deg);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}

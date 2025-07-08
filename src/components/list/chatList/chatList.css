@@ -1,0 +1,259 @@
+/* Scrollbar Styling (existing) */
+.chatList {
+  overflow: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.788) transparent;
+  overflow-x: hidden;
+}
+
+/* Search Bar and Add Button (existing) */
+.chatList .search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 10px 35px 20px;
+  position: relative;
+}
+
+.chatList .search .searchBar {
+  background-color: rgba(17, 25, 40, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.chatList .search .searchBar input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  flex: 1;
+}
+
+.chatList .search img {
+  margin-left: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.chatList .search .add {
+  width: 36px;
+  height: 36px;
+  background-color: rgba(17, 25, 40, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.chatList .search .add:hover {
+  background-color: rgba(223, 223, 223, 0.8);
+  transform: perspective(1000px) rotate(360deg);
+  filter: brightness(0.8);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Chat Room List Container (used by Flipper) */
+.chat-room-list-container {
+  /* This container needs to accommodate the absolute positioning that FLIP might temporarily use */
+  /* If you want a specific height for the scrollable area, set it here. */
+  /* If chatList parent handles scrolling, this can remain minimal. */
+}
+
+/* Chat Room Item (existing) - Base styles for each chat room */
+.chatList .item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 10px 10px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #dddddd35;
+  /* CRITICAL for FLIP: This transition makes the FLIP transforms smooth */
+  transition: transform 0.3s ease-out, background-color 0.2s ease,
+    box-shadow 0.2s ease, opacity 0.3s ease-out; /* Added opacity for smooth fades */
+  transform-origin: left center; /* For subtle hover slide */
+  position: relative; /* Needed for any absolute positioning or z-index within item */
+  z-index: 1; /* Default z-index, may be overridden by Flipper during animation */
+}
+
+/* Active Chat Room Item Styling (existing + enhancement) */
+.chatList .item.active {
+  border-left: 4px solid #92b6a7;
+  background-color: rgba(77, 99, 90, 0.6);
+  transition: border 0.3s ease-in-out, background-color 0.3s ease-in-out; /* Smooth transition for active state */
+}
+
+/* Hover states for all chat room items */
+.chatList .item:hover {
+  background-color: rgba(17, 25, 40, 0.7); /* Slightly darker on hover */
+  transform: translateX(5px); /* Subtle slide on hover */
+}
+
+/* Chat Room Item Image (existing) */
+.chatList .item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Chat Room Item Text Content (existing) */
+.chatList .item .text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-grow: 1; /* Allow text to take available space */
+  overflow: hidden; /* Prevent text overflow from pushing elements */
+}
+
+.chatList .item .username {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Last Message Styling (existing) */
+.chatList .item .lastMessage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  filter: brightness(100%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #cccccc; /* Slightly softer color for the message */
+}
+
+.chatList .item .lastMessage .msgTime {
+  filter: brightness(70%);
+  flex-shrink: 0; /* Prevent the time from shrinking */
+  margin-left: 8px; /* Space between message and time */
+}
+
+.chatList .item .lastMessage .mic {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  filter: brightness(100%);
+  margin-right: 4px; /* Space between mic icon and time if present */
+}
+
+.chatList .item .lastMessage .msgContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 5px;
+}
+
+.chatList .item .lastMessage .msgText {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Unseen Count Styling (existing + animation) */
+.chatList .item .unseenCount {
+  transform: translateY(-50%) scale(1); /* Ensure initial scale */
+  background-color: #ff4d4d;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px 8px;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+  margin-left: 10px; /* Space from the text content */
+  /* Added for pop-in/fade-out animation */
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    opacity 0.3s ease-out;
+  position: relative; /* To control layering if needed */
+  z-index: 2; /* Ensures it's above the item */
+}
+
+/* Unseen Count Pop-in Animation */
+@keyframes popIn {
+  0% {
+    transform: translateY(-50%) scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
+}
+.unseen-count-pop-in {
+  animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Unseen Count Fade-out Animation */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+}
+.unseen-count-fade-out {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+/* No Chat Message (existing) */
+.noChat {
+  padding: 20px;
+  text-align: center;
+  color: #ccc;
+  /* Add transition for FLIP for the 'no chat' message as well */
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* --- New Message Highlight Animation --- */
+@keyframes pulseHighlight {
+  0% {
+    background-color: rgba(146, 182, 167, 0.2);
+  }
+  50% {
+    background-color: rgba(146, 182, 167, 0.4);
+  } /* Brighter in the middle */
+  100% {
+    background-color: transparent;
+  }
+}
+
+.chatList .item.new-message-highlight {
+  animation: pulseHighlight 1.5s ease-out forwards; /* Longer duration for a softer pulse */
+}
+
+/* Hover text styling (existing) */
+.add-container .hover-text {
+  text-align: center;
+  line-height: 1.5;
+  position: absolute;
+  bottom: -5px; /* Position the text below the button */
+  right: -50px;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Show hover text on hover (existing) */
+.add-container:hover .hover-text {
+  opacity: 1;
+  visibility: visible;
+}

@@ -1,0 +1,71 @@
+.userinfo {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.userinfo .user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.userinfo .user img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover; /* Ensure the image fits well */
+}
+
+.userinfo .user h2 {
+  font-size: 28px;
+  font-weight: 500;
+  color: white;
+  margin: 0;
+}
+.userinfo .user p {
+  font-size: 12px;
+  color: #ccccccb2;
+  margin: 0;
+  padding-top: 3px;
+}
+
+.userinfo .icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.userinfo .icons img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  overflow: visible;
+  right: 19%;
+  top: 65%;
+  background: rgba(255, 255, 255, 0.678);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for dropdown */
+  border-radius: 5px 20px 20px 20px;
+
+  button {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: black;
+    font: bolder 12px/1.5 "Poppins", sans-serif;
+    transition: background 0.3s ease;
+    cursor: pointer;
+  }
+}
+.dropdown-menu button:hover {
+  background: rgba(141, 53, 53, 0.459);
+  border-radius: 5px 20px 20px 20px;
+}
