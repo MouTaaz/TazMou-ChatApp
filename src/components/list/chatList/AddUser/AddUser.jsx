@@ -1,9 +1,7 @@
-// AddUser.jsx (SMART JAVASCRIPT APPROACH)
-
-import { useState, useEffect, useMemo } from "react"; // Added useMemo
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import supabase from "../../../../lib/Supabase.js";
-import "./AddUser.css";
+import "./addUser.css";
 import useSessionStore from "../../../../lib/useStore.js";
 
 const AddUser = ({ onClose }) => {
@@ -11,7 +9,6 @@ const AddUser = ({ onClose }) => {
   const [user, setUser] = useState(null); // This will hold the filtered users to display
   const [searchStatus, setSearchStatus] = useState("idle");
 
-  // Destructure profile and chatRooms from the Zustand store
   const { profile, chatRooms } = useSessionStore();
 
   let toastId = null;
@@ -54,7 +51,6 @@ const AddUser = ({ onClose }) => {
     }
 
     if (!profile?.id) {
-      // Ensure current user is logged in
       toast.error("Current user profile not loaded. Please log in.");
       return;
     }
@@ -63,7 +59,6 @@ const AddUser = ({ onClose }) => {
     setSearchStatus("loading");
 
     try {
-      // Fetch all profiles matching the username
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -80,14 +75,12 @@ const AddUser = ({ onClose }) => {
         return;
       }
 
-      // --- EFFICIENT CLIENT-SIDE FILTERING ---
       const currentUserId = profile.id;
       const filteredData = data.filter(
         (foundUser) =>
           foundUser.id !== currentUserId && // Exclude self
           !usersInExistingChatsSet.has(foundUser.id) // Use the memoized set for efficient lookup
       );
-      // --- END EFFICIENT CLIENT-SIDE FILTERING ---
 
       if (filteredData.length > 0) {
         setUser(filteredData);
@@ -129,8 +122,6 @@ const AddUser = ({ onClose }) => {
     const userId = profile.id;
     const receiverId = foundUserToAdd.id;
 
-    // Failsafe check (still good to have, as the search result might become stale
-    // if a chat is created elsewhere just before this add operation).
     const { data: existingRoom } = await supabase
       .from("chatRooms")
       .select("*")
@@ -155,7 +146,7 @@ const AddUser = ({ onClose }) => {
     }
 
     const { fetchChatRooms } = useSessionStore.getState();
-    await fetchChatRooms(userId); // This will update chatRooms in the store, which will re-memoize usersInExistingChatsSet on next render
+    await fetchChatRooms(userId);
 
     toast.success(`Chat with ${foundUserToAdd.username} created.`);
     onClose();

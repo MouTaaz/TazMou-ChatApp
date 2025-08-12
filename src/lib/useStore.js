@@ -22,30 +22,23 @@ const useSessionStore = create((set, get) => ({
   cachedMessagesPerRoom: {},
 
   checkSession: async () => {
-    console.log("🔍 checkSession() started");
     set({ isLoading: true });
 
     try {
       const cachedSessionString = localStorage.getItem(
         "sb-tmmzsynqzqktzdpszdfb-auth-token"
       );
-      console.log("📦 Cached session string:", cachedSessionString);
 
       const cachedSession = cachedSessionString
         ? JSON.parse(cachedSessionString)
         : null;
 
-      console.log("✅ Parsed cached session:", cachedSession);
-
       if (cachedSession?.user?.id) {
         const { expires_at } = cachedSession;
         const now = Math.floor(Date.now() / 1000);
-        console.log("⏳ Token expires at:", expires_at, "| Current time:", now);
 
         if (expires_at && now > expires_at) {
-          console.log("⚠️ Token expired — refreshing session...");
           const { data, error } = await supabase.auth.refreshSession();
-          console.log("🔁 Refresh result — data:", data, "| error:", error);
 
           if (error) {
             console.error("❌ Refresh session error:", error);
@@ -54,29 +47,19 @@ const useSessionStore = create((set, get) => ({
           }
 
           set({ session: data.session });
-          console.log("✅ New session set after refresh:", data.session);
           await get().initializeUserData(data.session.user.id);
           return data.session;
         }
 
-        console.log("🔐 Using valid cached session");
         set({ session: cachedSession });
         await get().initializeUserData(cachedSession.user.id);
         return cachedSession;
       }
 
-      console.log("📡 No valid cached session, getting from Supabase...");
       const {
         data: { session },
         error,
       } = await supabase.auth.getSession();
-
-      console.log(
-        "🌐 Supabase getSession result — session:",
-        session,
-        "| error:",
-        error
-      );
 
       if (error || !session?.user) {
         console.warn("⚠️ No session found or error occurred");
@@ -85,7 +68,6 @@ const useSessionStore = create((set, get) => ({
       }
 
       set({ session });
-      console.log("✅ Session set from Supabase:", session);
       await get().initializeUserData(session.user.id);
       return session;
     } catch (err) {
@@ -94,7 +76,6 @@ const useSessionStore = create((set, get) => ({
       return null;
     } finally {
       set({ isLoading: false });
-      console.log("🔚 checkSession() ended — loading set to false");
     }
   },
 

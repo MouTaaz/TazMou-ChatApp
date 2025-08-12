@@ -163,7 +163,7 @@ const ChatList = () => {
             alt="Add or Remove"
           />
           <span className="hover-text">
-            Add From <br /> Your Contacts
+            Add From <br /> Registered Users
           </span>
         </div>
       </div>
