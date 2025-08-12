@@ -47,8 +47,6 @@ const Chat = ({ backButton }) => {
     onlineUsers,
   } = useSessionStore();
 
-  console.log("messages:", messages);
-
   const activeChatRoom = useMemo(() => {
     return chatRooms.find((room) => room.id === activeChatRoomId);
   }, [activeChatRoomId, chatRooms]);
@@ -122,9 +120,6 @@ const Chat = ({ backButton }) => {
   useEffect(() => {
     if (profile?.id && activeChatRoomId) {
       useSessionStore.getState().updateLastSeen(profile.id);
-      console.log(
-        `Active chatroom changed. Updating last_seen for ${profile.id}.`
-      );
     }
   }, [activeChatRoomId, profile?.id]);
 
