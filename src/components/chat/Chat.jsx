@@ -107,6 +107,19 @@ const Chat = ({ backButton }) => {
   }, [fetchMessages]);
 
   useEffect(() => {
+    // Fix mobile viewport height
+    const setRealHeight = () => {
+      const doc = document.documentElement;
+      doc.style.setProperty("--real-height", `${window.innerHeight}px`);
+    };
+
+    setRealHeight();
+    window.addEventListener("resize", setRealHeight);
+
+    return () => window.removeEventListener("resize", setRealHeight);
+  }, []);
+
+  useEffect(() => {
     if (profile?.id && activeChatRoomId) {
       useSessionStore.getState().updateLastSeen(profile.id);
       console.log(

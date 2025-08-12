@@ -66,7 +66,6 @@ const useSessionStore = create((set, get) => ({
         set({ session: null });
         return null;
       }
-
       set({ session });
       await get().initializeUserData(session.user.id);
       return session;

@@ -27,6 +27,7 @@
   /* --bg-medium: rgba(33, 39, 37, 0.7); */
   /* --bg-soft: rgba(27, 46, 40, 0.452); */
   --red: #f44336;
+  --real-height: 100vh;
 }
 
 /* Base Chat Container */
@@ -36,12 +37,16 @@
   border-right: var(--border-color);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: var(--real-height);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* Chat Header (Top) */
 .chat .top {
-  padding: 20px;
+  padding: 40px;
   display: flex;
   position: relative;
   justify-content: space-between;
@@ -169,9 +174,9 @@
 
 /* Chat Message Area (Center) */
 .chat .center {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 1px 10px 0px 10px;
-  overflow-y: scroll; /* Use overflow-y for vertical scrolling */
+  overflow-y: auto; /* Use overflow-y for vertical scrolling */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.788) transparent;
   overflow-x: hidden;
@@ -402,6 +407,7 @@
 .chat .bottom {
   padding: 10px;
   display: flex;
+  flex-shrink: 0;
   flex-direction: column; /* Allows preview area to stack above input */
   gap: 10px; /* Space between preview area and input-area-wrapper */
   border-top: 1px solid var(--border-color);
@@ -894,4 +900,27 @@
   border-radius: 16px;
   box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
   cursor: default;
+}
+
+@supports (padding: max(0px)) {
+  .chat {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .chat .bottom {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .chat {
+    height: -webkit-fill-available;
+  }
+
+  .chat .bottom {
+    position: sticky;
+    bottom: 0;
+  }
 }
