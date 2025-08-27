@@ -17,7 +17,6 @@ const useSessionStore = create((set, get) => ({
   BackToList: false,
   searchQuery: "",
   messages: [],
-  onlineUsers: {},
   showSettingsPanel: false,
   cachedMessagesPerRoom: {},
 
@@ -41,12 +40,12 @@ const useSessionStore = create((set, get) => ({
           const { data, error } = await supabase.auth.refreshSession();
 
           if (error) {
-            console.error("❌ Refresh session error:", error);
             set({ session: null });
             return null;
           }
 
           set({ session: data.session });
+
           await get().initializeUserData(data.session.user.id);
           return data.session;
         }
@@ -66,7 +65,9 @@ const useSessionStore = create((set, get) => ({
         set({ session: null });
         return null;
       }
+
       set({ session });
+
       await get().initializeUserData(session.user.id);
       return session;
     } catch (err) {
@@ -238,7 +239,6 @@ const useSessionStore = create((set, get) => ({
                     return {
                       ...room,
                       lastMessageSeen: newMessage.seen,
-                      x,
                     };
                   }
                 }
