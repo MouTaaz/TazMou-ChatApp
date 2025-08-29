@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import supabase from "./lib/Supabase.js";
+import { useEffect, useState, useRef } from "react";
 
 // Components
 import Login from "./components/Login/Login.jsx";
@@ -32,7 +32,9 @@ const App = () => {
 
   usePresence();
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 0
+  );
   const isMobile = windowWidth < 900;
 
   console.log("windowWidth:", windowWidth);
@@ -42,34 +44,39 @@ const App = () => {
     localStorage.getItem("sb-tmmzsynqzqktzdpszdfb-auth-token")
   );
 
+  // single mount effect: check session, subscribe to auth changes and window resize
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
+    let authSubscription = null;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
     const initialize = async () => {
       try {
-        await checkSession(); // Let the store handle everything
+        const session = await checkSession();
+        if (!isMounted) return;
+        // subscribe once after initial session check
+        authSubscription = subscribeToAuthChanges();
       } catch (err) {
         console.error("Initialization error:", err);
       }
     };
+
     initialize();
-    return () => {
-      mounted = false;
-    };
-  }, [checkSession]);
-
-  useEffect(() => {
-    const subscription = subscribeToAuthChanges();
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      console.log("window.addEventListener");
-    };
-    window.addEventListener("resize", handleResize);
 
     return () => {
-      subscription.unsubscribe();
+      isMounted = false;
       window.removeEventListener("resize", handleResize);
+      if (authSubscription) {
+        // supabase onAuthStateChange returns a subscription with unsubscribe()
+        if (typeof authSubscription.unsubscribe === "function")
+          authSubscription.unsubscribe();
+        // or the store could return a cleanup function
+        else if (typeof authSubscription === "function") authSubscription();
+      }
     };
-  }, [subscribeToAuthChanges]);
+  }, [checkSession, subscribeToAuthChanges]);
 
   useEffect(() => {
     if (!session) {
@@ -77,23 +84,19 @@ const App = () => {
       return;
     }
     console.log("Attempting to subscribe to messages...");
-    const messageSubscription = subscribeToMessages();
+    const cleanup = subscribeToMessages();
     return () => {
-      if (messageSubscription?.unsubscribe) {
-        console.log("Unsubscribing from messages.");
-        messageSubscription.unsubscribe();
-      }
+      if (typeof cleanup === "function") cleanup();
     };
   }, [session, subscribeToMessages]);
 
   useEffect(() => {
     if (!session) return;
-    const profilesSubscription = subscribeToProfiles();
-    const chatRoomSub = subscribeToChatRooms();
-
+    const cleanupProfiles = subscribeToProfiles();
+    const cleanupChatRooms = subscribeToChatRooms();
     return () => {
-      if (profilesSubscription?.unsubscribe) profilesSubscription.unsubscribe();
-      if (chatRoomSub?.unsubscribe) chatRoomSub.unsubscribe();
+      if (typeof cleanupProfiles === "function") cleanupProfiles();
+      if (typeof cleanupChatRooms === "function") cleanupChatRooms();
     };
   }, [session, subscribeToChatRooms]);
 
