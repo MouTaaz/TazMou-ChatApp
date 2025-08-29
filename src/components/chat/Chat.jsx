@@ -1,12 +1,6 @@
 import "./chat.css";
 import EmojiPicker from "emoji-picker-react";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import useSessionStore from "../../lib/useStore.js";
 import { formatTime, formatDate } from "../Utile/Formats.js";
 import AutoResizingTextarea from "../Utile/AutoResizingTextarea.jsx";
@@ -33,6 +27,9 @@ const Chat = ({ backButton }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [cameraStream, setCameraStream] = useState(null);
   const [cameraImage, setCameraImage] = useState(null);
+  // Hold preview object URLs so we can revoke them to avoid memory leaks
+  const selectedFilePreviewRef = useRef(null);
+  const cameraImagePreviewRef = useRef(null);
 
   const {
     activeChatRoomId,
@@ -92,13 +89,7 @@ const Chat = ({ backButton }) => {
         console.error("Failed to fetch messages:", error);
       }
     }
-  }, [
-    activeChatRoomId,
-    profile?.id,
-    markMessagesAsSeen,
-    activeChatRoom,
-    messages,
-  ]);
+  }, [activeChatRoomId, profile?.id, markMessagesAsSeen]);
 
   useEffect(() => {
     fetchMessages();
@@ -120,6 +111,9 @@ const Chat = ({ backButton }) => {
   useEffect(() => {
     if (profile?.id && activeChatRoomId) {
       useSessionStore.getState().updateLastSeen(profile.id);
+      console.log(
+        `Active chatroom changed. Updating last_seen for ${profile.id}.`
+      );
     }
   }, [activeChatRoomId, profile?.id]);
 
@@ -473,13 +467,13 @@ const Chat = ({ backButton }) => {
                   selectedFile.type.startsWith("video/") ? (
                     selectedFile.type.startsWith("image/") ? (
                       <img
-                        src={URL.createObjectURL(selectedFile)}
+                        src={selectedFilePreviewRef.current || URL.createObjectURL(selectedFile)}
                         alt="Preview"
                         className="image-preview"
                       />
                     ) : (
                       <video
-                        src={URL.createObjectURL(selectedFile)}
+                        src={selectedFilePreviewRef.current || URL.createObjectURL(selectedFile)}
                         controls
                         className="video-preview"
                       />
@@ -525,7 +519,7 @@ const Chat = ({ backButton }) => {
             {cameraImage && (
               <div className="camera-image-preview">
                 <img
-                  src={URL.createObjectURL(cameraImage)}
+                  src={cameraImagePreviewRef.current || URL.createObjectURL(cameraImage)}
                   alt="Captured"
                   className="captured-image"
                 />
