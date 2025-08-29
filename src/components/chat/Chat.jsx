@@ -49,15 +49,6 @@ const Chat = ({ backButton }) => {
   }, [activeChatRoomId, chatRooms]);
 
   const { isSelfChat, chatName, chatAvatar, otherUser } = useMemo(() => {
-    if (!activeChatRoom || !profile || !profiles) {
-      return {
-        isSelfChat: false,
-        chatName: "Loading...",
-        chatAvatar: "./default-avatar.png",
-        otherUser: null,
-      };
-    }
-
     return getChatDisplayProps(activeChatRoom, profile, profiles);
   }, [activeChatRoom, profile, profiles]);
 
