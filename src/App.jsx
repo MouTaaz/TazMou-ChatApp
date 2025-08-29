@@ -37,13 +37,6 @@ const App = () => {
   );
   const isMobile = windowWidth < 900;
 
-  console.log("windowWidth:", windowWidth);
-
-  console.log(
-    "LocalStorage auth data:",
-    localStorage.getItem("sb-tmmzsynqzqktzdpszdfb-auth-token")
-  );
-
   // single mount effect: check session, subscribe to auth changes and window resize
   useEffect(() => {
     let isMounted = true;
@@ -79,11 +72,9 @@ const App = () => {
   }, [checkSession, subscribeToAuthChanges]);
 
   useEffect(() => {
-    if (!session) {
-      console.log("No session, skipping message subscription.");
+    if (!session) {     
       return;
     }
-    console.log("Attempting to subscribe to messages...");
     const cleanup = subscribeToMessages();
     return () => {
       if (typeof cleanup === "function") cleanup();
@@ -101,7 +92,6 @@ const App = () => {
   }, [session, subscribeToChatRooms]);
 
   if (isLoading) {
-    console.log("Attempting to render SkeletonLoader");
     return (
       <SkeletonLoader
         isMobile={isMobile}
